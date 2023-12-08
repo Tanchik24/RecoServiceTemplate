@@ -1,6 +1,9 @@
 import os
-import uvicorn
 
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+os.environ['ROOT_DIR'] = ROOT_DIR
+
+import uvicorn
 from service.api.app import create_app
 from service.settings import get_config
 
