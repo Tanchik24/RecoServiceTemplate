@@ -12,6 +12,7 @@ from tqdm.auto import tqdm
 
 class CrossValScore:
     def __init__(self, models: Dict, metrics: Dict, splitter: TimeRangeSplitter, interactions: Interactions):
+        self.fold_iterator = None
         self.models = models
         self.metrics = metrics
         self.splitter = splitter

@@ -10,8 +10,6 @@ load_dotenv()
 
 
 class Repository:
-    pass
-
     @staticmethod
     def fetch_user_knn_model() -> "UserKnn":
         file_path = os.getenv("KNN")
@@ -26,6 +24,6 @@ class Repository:
         file_path = os.getenv("POPULAR")
         root_dir = os.environ.get("ROOT_DIR")
         file_path = os.path.join(root_dir, file_path)
-        with open(file_path, "r") as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             popular_model = json.load(file)
         return popular_model

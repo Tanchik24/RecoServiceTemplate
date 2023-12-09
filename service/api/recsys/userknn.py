@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import List
+from typing import Any, List
 
 import numpy as np
 import pandas as pd
@@ -13,6 +13,16 @@ class UserKnn:
     """
 
     def __init__(self, model: ItemItemRecommender):
+        self.item_idf = pd.DataFrame()
+        self.users: Any = None
+        self.weights_matrix: Any = None
+        self.user_knn: Any = None
+        self.watched: Any = None
+        self.interaction_matrix: Any = None
+        self.items_mapping: Any = None
+        self.items_inv_mapping: Any = None
+        self.users_mapping: Any = None
+        self.users_inv_mapping: Any = None
         self.model = model
         self.is_fitted = False
 
@@ -41,32 +51,31 @@ class UserKnn:
 
         return self.interaction_matrix
 
-    def idf(self, n: int, x: float):
+    def idf(self, n: int, x: float) -> float:
         return np.log((1 + n) / (1 + x) + 1)
 
     def _get_users(self, train: pd.DataFrame):
         self.users = set(train["user_id"])
 
-    def _count_item_idf(self, df: pd.DataFrame):
+    def _count_item_idf(self, df: pd.DataFrame, n: int):
         item_cnt = Counter(df["item_id"].values)
-        item_idf = pd.DataFrame.from_dict(item_cnt, orient="index", columns=["doc_freq"]).reset_index()
-        item_idf["idf"] = item_idf["doc_freq"].apply(lambda x: self.idf(self.n, x))
-        self.item_idf = item_idf
+        temp_item_idf = pd.DataFrame.from_dict(item_cnt, orient="index", columns=["doc_freq"]).reset_index()
+        temp_item_idf["idf"] = temp_item_idf["doc_freq"].apply(lambda x: self.idf(n, x))
+        self.item_idf = temp_item_idf
 
     def fit(self, train: pd.DataFrame):
         self._get_users(train)
-        self.N_users = train["user_id"].nunique()
         self.user_knn = self.model
         self.get_mappings(train)
         self.weights_matrix = self.get_matrix(train)
 
-        self.n = train.shape[0]
-        self._count_item_idf(train)
+        n = train.shape[0]
+        self._count_item_idf(train, n)
 
         self.user_knn.fit(self.weights_matrix)
         self.is_fitted = True
 
-    def _generate_recs_mapper(self, model: ItemItemRecommender, N: int):
+    def _generate_recs_mapper(self, model: ItemItemRecommender, N: int = 50):
         def _recs_mapper(user):
             user_id = self.users_mapping[user]
             users, sim = model.similar_items(user_id, N=N)
@@ -78,10 +87,7 @@ class UserKnn:
         if not self.is_fitted:
             raise ValueError("Please call fit before predict")
 
-        mapper = self._generate_recs_mapper(
-            model=self.user_knn,
-            N=self.N_users,
-        )
+        mapper = self._generate_recs_mapper(model=self.user_knn)
 
         recs = pd.DataFrame({"user_id": test["user_id"].unique()})
         recs["sim_user_id"], recs["sim"] = zip(*recs["user_id"].map(mapper))
@@ -95,7 +101,6 @@ class UserKnn:
             .drop_duplicates(["user_id", "item_id"], keep="first")
             .merge(self.item_idf, left_on="item_id", right_on="index", how="left")
         )
-
         recs["score"] = recs["sim"] * recs["idf"]
         recs = recs.sort_values(["user_id", "score"], ascending=False)
         recs["rank"] = recs.groupby("user_id").cumcount() + 1
@@ -108,7 +113,7 @@ class UserKnn:
         if not self.is_fitted:
             raise ValueError("Please call fit before predict")
 
-        sim_users, sims = self._generate_recs_mapper(model=self.user_knn, N=self.N_users)(user)
+        sim_users, sims = self._generate_recs_mapper(model=self.user_knn)(user)
 
         sim_users_np = np.array(sim_users)
         sims_np = np.array(sims)

@@ -1,5 +1,6 @@
 from typing import List
 
+import numpy as np
 from fastapi import APIRouter, FastAPI, Header, Request
 from pydantic import BaseModel
 
@@ -44,8 +45,13 @@ async def get_reco(model_name: str, user_id: int, request: Request, authorizatio
 
     k_recs = request.app.state.k_recs
     knn_rec = user_knn_model.recommend(user_id)[: int(k_recs * 0.5)]
-    pop_rec = popular_model.get(str(user_id), popular_model["all"])[: int(k_recs - len(knn_rec))]
-    recos = knn_rec + pop_rec
+    pop_rec = popular_model.get(str(user_id), popular_model["all"])
+    knn_rec_np = np.array(knn_rec)
+    pop_rec_np = np.array(pop_rec)
+
+    pop_rec_filtered = np.setdiff1d(pop_rec_np, knn_rec_np)
+
+    recos = np.concatenate([knn_rec_np, pop_rec_filtered])[:k_recs]
     return RecoResponse(user_id=user_id, items=recos)
 
 

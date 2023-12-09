@@ -1,4 +1,4 @@
-from typing import Any, Set
+from typing import Any, Dict, List, Set
 
 import numpy as np
 import pandas as pd
@@ -8,7 +8,18 @@ from scipy.stats import mode
 
 
 class PopularSocialDem:
+    users_dict: dict
+    item_set_covered: List[Any]
+    sparse_matrix: csr_matrix
+    inv_item_mapping: dict
+    inv_user_mapping: dict
+    item_id_mapping: Dict[Any, Any]
+    user_id_mapping: Dict[Any, Any]
+    top_dict_soc_dem: dict
+    interactions: pd.DataFrame
+
     def __init__(self, users):
+        self.interactions_df = None
         self.users = users
 
     def _get_topk_dict_soc_dem(self) -> None:
@@ -74,13 +85,16 @@ class PopularSocialDem:
             if rec not in user_items and len(results) < n_rec:
                 results.add(rec)
 
+        def can_add_rec(rec: int, user_items: Any, results: set, n_rec: int) -> bool:
+            return rec not in user_items and rec not in results and len(results) < n_rec
+
         if len(results) < n_rec:
             for rec in self.item_set_covered:
-                if rec not in user_items and rec not in results and len(results) < n_rec:
+                if can_add_rec(rec, user_items, results, n_rec):
                     results.add(rec)
         return results
 
-    def predict(self, user: Any, n_rec: int = 10, df: bool = True) -> Any:
+    def predict(self, user: Any, n_rec: int = 20, df: bool = True) -> Any:
         if df is False:
             results = self.pred_for_one_user(user, n_rec)
             return results

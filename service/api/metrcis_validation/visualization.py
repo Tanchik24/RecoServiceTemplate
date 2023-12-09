@@ -27,8 +27,7 @@ class Visualizer:
         def highlight_common_movies(row):
             if row["title"] in common_titles:
                 return ["background-color: blue"] * len(row)
-            else:
-                return [""] * len(row)
+            return [""] * len(row)
 
         user_viewed_styled = user_viewed.style.apply(highlight_common_movies, axis=1)
         recos_styled = recos.style.apply(highlight_common_movies, axis=1)
