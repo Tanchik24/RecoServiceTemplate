@@ -44,7 +44,7 @@ async def get_reco(model_name: str, user_id: int, request: Request, authorizatio
 
     k_recs = request.app.state.k_recs
     knn_rec = user_knn_model.recommend(user_id)[: int(k_recs * 0.5)]
-    pop_rec = popular_model[str(user_id)][: int(k_recs - len(knn_rec))]
+    pop_rec = popular_model.get(str(user_id), popular_model["all"])[: int(k_recs - len(knn_rec))]
     recos = knn_rec + pop_rec
     return RecoResponse(user_id=user_id, items=recos)
 

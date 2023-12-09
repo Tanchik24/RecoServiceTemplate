@@ -66,4 +66,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# large files
+kion_train/
+service/api/recsys/models/
+
 

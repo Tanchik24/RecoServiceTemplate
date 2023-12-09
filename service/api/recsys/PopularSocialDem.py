@@ -11,7 +11,7 @@ class PopularSocialDem:
     def __init__(self, users):
         self.users = users
 
-    def _get_topk_dict_soc_dem(self):
+    def _get_topk_dict_soc_dem(self) -> None:
         interactions = self.interactions_df.merge(self.users, on="user_id", how="left")
         self.interactions = interactions.dropna(axis=0, how="any")
 
@@ -23,7 +23,7 @@ class PopularSocialDem:
         )
         self.top_dict_soc_dem = counts.groupby(["age", "sex"])["item_id"].apply(list).to_dict()
 
-    def _get_spars_matrix(self):
+    def _get_spars_matrix(self) -> None:
         user_id_codes = self.interactions_df["user_id"].astype("category").cat.codes
         item_id_codes = self.interactions_df["item_id"].astype("category").cat.codes
 
@@ -37,10 +37,10 @@ class PopularSocialDem:
             (self.interactions_df["weight"], (user_id_codes, item_id_codes)), dtype=np.float32
         )
 
-    def _get_top_items_covered_users(self):
+    def _get_top_items_covered_users(self) -> None:
         assert self.sparse_matrix.format == "csr"
         self.item_set_covered = []
-        covered_users = np.zeros(self.sparse_matrix.shape[0], dtype=bool)
+        covered_users: np.ndarray = np.zeros(self.sparse_matrix.shape[0], dtype=bool)
         while covered_users.sum() != len(covered_users):
             top_item = mode(self.sparse_matrix[~covered_users].indices)[0]
             self.item_set_covered.append(top_item)
@@ -49,7 +49,7 @@ class PopularSocialDem:
             )
         self.item_set_covered = [self.inv_item_mapping[item] for item in self.item_set_covered]
 
-    def _get_users_dict(self):
+    def _get_users_dict(self) -> None:
         user_items = self.interactions_df.groupby("user_id")["item_id"].agg(set)
         self.users_dict = {
             user.user_id: [(user.age, user.sex), user_items.get(user.user_id, set())]
@@ -66,7 +66,7 @@ class PopularSocialDem:
 
     def pred_for_one_user(self, user: int, n_rec: int) -> Set:
         user_info, user_items = self.users_dict.get(user, (None, []))
-        results = set()
+        results: Set[int] = set()
 
         potential_recommendations = self.top_dict_soc_dem.get(user_info, self.item_set_covered)
 
