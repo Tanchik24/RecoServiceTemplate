@@ -70,4 +70,11 @@ venv.bak/
 kion_train/
 service/api/recsys/models/
 
+kion_train/interactions.csv
+kion_train/items.csv
+kion_train/users.csv
+
+./service/api/recsys/models/knn.pkl
+./service/api/recsys/models/popular_recommendations.json
+
 
