@@ -19,8 +19,7 @@ class RecoResponse(BaseModel):
 popular_model = Repository.fetch_popular_model()
 dataset = Repository.fetch_dataset()
 model = Repository.fetch_lightfm_model()
-users = dataset.user_id_map.convert_to_external(
-    list(dataset.interactions.df["user_id"]))
+users = dataset.user_id_map.convert_to_external(list(dataset.interactions.df["user_id"]))
 
 ann = ANNRecommendation(model, dataset)
 ann.fit()
@@ -41,14 +40,13 @@ async def health() -> str:
     tags=["Recommendations"],
     response_model=RecoResponse,
 )
-async def get_reco(model_name: str, user_id: int, request: Request,
-                   authorization: str = Header(None)) -> RecoResponse:
+async def get_reco(model_name: str, user_id: int, request: Request, authorization: str = Header(None)) -> RecoResponse:
     check_access(authorization)
     app_logger.info(f"Request for model: {model_name}, user_id: {user_id}")
 
     if model_name != "light_fm":
         raise ModelNotFoundError(error_message=f"Model {model_name} not found")
-    if user_id > 10 ** 9:
+    if user_id > 10**9:
         raise UserNotFoundError(error_message=f"User {user_id} not found")
 
     k_recs = request.app.state.k_recs

@@ -51,7 +51,7 @@ mypy: .venv
 	poetry run mypy $(PROJECT) $(TESTS)
 
 pylint: .venv
-	poetry run pylint $(PROJECT) $(TESTS)
+	poetry run pylint $(PROJECT) $(TESTS) --unsafe-load-any-extension=y
 
 lint: isort flake mypy pylint
 

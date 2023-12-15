@@ -1,4 +1,5 @@
 import time
+from typing import Any
 
 import nmslib
 import numpy as np
@@ -13,6 +14,9 @@ class ANNRecommendation:
         self.num_threads = num_threads
         self.K = K
         self.space_name = space_name
+        self.augmented_item_embeddings: Any = None
+        self.augmented_user_embeddings: Any = None
+        self.index: Any = None
 
     def get_vectors(self) -> tuple:
         user_embeddings, item_embeddings = self.model.get_vectors(self.dataset)
@@ -52,8 +56,9 @@ class ANNRecommendation:
         nbrs = self.index.knnQueryBatch(query_matrix, k=self.K, num_threads=self.num_threads)
         end = time.time()
         print(
-            "kNN time total=%f (sec), per query=%f (sec), per query adjusted for thread number=%f (sec)"
-            % (end - start, float(end - start) / query_qty, self.num_threads * float(end - start) / query_qty)
+            f"""kNN time total=%f {end - start}, per
+            query=%f {float(end - start) / query_qty, self.num_threads * float(end - start) },
+             per query adjusted for thread number=%f {query_qty}"""
         )
         results = nbrs[0][0]
         items = self.dataset.item_id_map.convert_to_external(results)
