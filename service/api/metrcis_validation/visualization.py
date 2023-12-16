@@ -35,11 +35,11 @@ class Visualizer:
         users_str = ", ".join(map(str, users))
 
         print("*" * 20 + " " + f"Просмотры пользователей {users_str}" + " " + "*" * 20)
-        display(user_viewed_styled)  # type: ignore
+        display(user_viewed_styled)
 
         print("\n" * 3)
 
         print("*" * 20 + " " + f"Рекомендации для пользователей {users_str}" + " " + "*" * 20)
-        display(recos_styled)  # type: ignore
+        display(recos_styled)
 
         return user_viewed_styled, recos_styled
