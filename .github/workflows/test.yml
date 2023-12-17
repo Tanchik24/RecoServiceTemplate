@@ -37,6 +37,7 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
           poetry install
+          poetry run pip install --upgrade pip
           poetry run pip install --upgrade setuptools wheel
           pip install lightfm==1.17
       
