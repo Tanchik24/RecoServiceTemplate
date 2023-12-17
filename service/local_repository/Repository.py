@@ -3,7 +3,6 @@ import os
 import pickle
 
 from dotenv import load_dotenv
-from lightfm import LightFM
 from rectools.dataset import Dataset
 
 from service.api.recsys.userknn import UserKnn
@@ -39,7 +38,7 @@ class Repository:
             dataset = pickle.load(file)
         return dataset
 
-    def fetch_lightfm_model(self) -> "LightFM":
+    def fetch_lightfm_model(self) -> "Dataset":
         file_path = os.getenv("LIGHTFM")
         file_path = os.path.join(self.ROOT_DIR, file_path)
         with open(file_path, "rb") as file:
