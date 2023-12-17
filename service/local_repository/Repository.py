@@ -16,8 +16,12 @@ class Repository:
         root_dir: str = os.path.dirname(os.path.abspath(__file__))
         print(f'пуууууть {root_dir}')
         parts: list = root_dir.split("/")
+        print(f'массив {parts}')
         index: int = len(parts) - 1 - parts[::-1].index("RecoServiceTemplate")
+        print((f'индекс {index}'))
         self.ROOT_DIR: str = "/".join(parts[:index + 1])
+        print(f'вывод {self.ROOT_DIR}')
+
 
     def fetch_user_knn_model(self) -> "UserKnn":
         file_path = os.getenv("KNN")
