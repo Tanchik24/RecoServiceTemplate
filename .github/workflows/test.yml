@@ -39,7 +39,7 @@ jobs:
           poetry install
           poetry run pip install --upgrade pip
           poetry run pip install --upgrade setuptools wheel
-          pip install lightfm==1.17
+          poetry run pip install --no-binary :all: lightfm==1.17
       
       - name: Run tests
         run: make lint
