@@ -35,6 +35,7 @@ class ANNRecommendation:
         self.augmented_user_embeddings = np.append(user_embeddings, extra_zero, axis=1)
 
     def create_index(self) -> None:
+        # pylint: disable=c-extension-no-member
         self.index = nmslib.init(method="hnsw", space=self.space_name, data_type=nmslib.DataType.DENSE_VECTOR)
         self.index.addDataPointBatch(self.augmented_item_embeddings)
         self.index.createIndex(self.index_time_params)
