@@ -54,14 +54,13 @@ class UserKnn:
     def idf(self, n: int, x: float) -> float:
         return np.log((1 + n) / (1 + x) + 1)
 
-    def _get_users(self, train: pd.DataFrame):
+    def _get_users(self, train: pd.DataFrame) -> None:
         self.users = set(train["user_id"])
 
     def _count_item_idf(self, df: pd.DataFrame, n: int):
         item_cnt = Counter(df["item_id"].values)
-        temp_item_idf = pd.DataFrame.from_dict(item_cnt, orient="index", columns=["doc_freq"]).reset_index()
-        temp_item_idf["idf"] = temp_item_idf["doc_freq"].apply(lambda x: self.idf(n, x))
-        self.item_idf = temp_item_idf
+        self.item_idf = pd.DataFrame.from_dict(item_cnt, orient="index", columns=["doc_freq"]).reset_index()
+        self.item_idf["idf"] = self.item_idf["doc_freq"].apply(lambda x: self.idf(n, x))
 
     def fit(self, train: pd.DataFrame):
         self._get_users(train)
