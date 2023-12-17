@@ -14,6 +14,7 @@ load_dotenv()
 class Repository:
     def __init__(self) -> None:
         root_dir: str = os.path.dirname(os.path.abspath(__file__))
+        print(root_dir)
         parts: list = root_dir.split("/")
         index: int = len(parts) - 1 - parts[::-1].index("RecoServiceTemplate")
         self.ROOT_DIR: str = "/".join(parts[:index + 1])
