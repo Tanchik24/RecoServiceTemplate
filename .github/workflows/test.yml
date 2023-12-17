@@ -35,7 +35,10 @@ jobs:
   
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install 
+        run: |
+          poetry install
+          poetry run pip install --upgrade setuptools wheel
+          pip install lightfm==1.17 --no-use-pep517
       
       - name: Run tests
         run: make lint
