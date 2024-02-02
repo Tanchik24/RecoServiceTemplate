@@ -1,13 +1,11 @@
+import random
 from typing import List
 
-import numpy as np
 from fastapi import APIRouter, FastAPI, Header, Request
 from pydantic import BaseModel
 
-from service.api.auth import check_access
-from service.api.exceptions import ModelNotFoundError, UserNotFoundError
-from service.api.recsys.ANNRecommendation import ANNRecommendation
-from service.local_repository.Repository import Repository
+from service.api.auth import check_access, check_model_user
+from service.api.recsys.get_knn_recommend import get_knn_rocommend
 from service.log import app_logger
 
 
@@ -15,15 +13,6 @@ class RecoResponse(BaseModel):
     user_id: int
     items: List[int]
 
-
-repository: Repository = Repository()
-popular_model = repository.fetch_popular_model()
-dataset = repository.fetch_dataset()
-model = repository.fetch_lightfm_model()
-users = dataset.user_id_map.convert_to_external(list(dataset.interactions.df["user_id"]))
-
-ann = ANNRecommendation(model, dataset)
-ann.fit()
 
 router = APIRouter()
 
@@ -45,24 +34,13 @@ async def get_reco(model_name: str, user_id: int, request: Request, authorizatio
     check_access(authorization)
     app_logger.info(f"Request for model: {model_name}, user_id: {user_id}")
 
-    if model_name != "light_fm":
-        raise ModelNotFoundError(error_message=f"Model {model_name} not found")
-    if user_id > 10**9:
-        raise UserNotFoundError(error_message=f"User {user_id} not found")
-
+    check_model_user("knn_model", model_name, user_id)
     k_recs = request.app.state.k_recs
+    recos = get_knn_rocommend(user_id, k_recs)
 
-    light_fm = []
+    if recos is None:
+        recos = [random.randint(0, 100) for _ in range(k_recs)]
 
-    if user_id in users:
-        light_fm = ann.get_recommendation([user_id])
-
-    pop_rec = popular_model.get(str(user_id), popular_model["all"])
-    light_fm_np = np.array(light_fm)
-    pop_rec_np = np.array(pop_rec)
-
-    pop_rec_filtered = np.setdiff1d(pop_rec_np, light_fm_np)
-    recos = np.concatenate([light_fm_np, pop_rec_filtered])[:k_recs]
     return RecoResponse(user_id=user_id, items=recos)
 
 

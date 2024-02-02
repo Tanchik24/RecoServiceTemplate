@@ -1,10 +1,8 @@
-import json
 import os
 import pickle
 
+import numpy as np
 from dotenv import load_dotenv
-from lightfm import LightFM
-from rectools.dataset import Dataset
 
 from service.api.recsys.userknn import UserKnn
 
@@ -12,40 +10,23 @@ load_dotenv()
 
 
 class Repository:
-    def __init__(self) -> None:
-        root_dir: str = os.path.dirname(os.path.abspath(__file__))
-        print(f"пуууууть {root_dir}")
-        parts: list = root_dir.split("/")
-        print(f"массив {parts}")
-        index: int = len(parts) - 1 - parts[::-1].index("RecoServiceTemplate")
-        print((f"индекс {index}"))
-        self.ROOT_DIR: str = "/".join(parts[: index + 1])
-        print(f"вывод {self.ROOT_DIR}")
-
-    def fetch_user_knn_model(self) -> "UserKnn":
+    @staticmethod
+    def fetch_user_knn_model() -> "UserKnn":
         file_path = os.getenv("KNN")
-        file_path = os.path.join(self.ROOT_DIR, file_path)
+        root_dir = os.environ.get("ROOT_DIR")
+        if root_dir is None:
+            return None
+        file_path = os.path.join(root_dir, file_path)
         with open(file_path, "rb") as file:
             user_knn_model = pickle.load(file)
         return user_knn_model
 
-    def fetch_popular_model(self) -> dict:
+    @staticmethod
+    def fetch_popular_model() -> np.ndarray:
         file_path = os.getenv("POPULAR")
-        file_path = os.path.join(self.ROOT_DIR, file_path)
-        with open(file_path, "r", encoding="utf-8") as file:
-            popular_model = json.load(file)
+        root_dir = os.environ.get("ROOT_DIR")
+        if root_dir is None:
+            return None
+        file_path = os.path.join(root_dir, file_path)
+        popular_model = np.load(file_path)
         return popular_model
-
-    def fetch_dataset(self) -> "LightFM":
-        file_path = os.getenv("DATASET")
-        file_path = os.path.join(self.ROOT_DIR, file_path)
-        with open(file_path, "rb") as file:
-            dataset = pickle.load(file)
-        return dataset
-
-    def fetch_lightfm_model(self) -> "Dataset":
-        file_path = os.getenv("LIGHTFM")
-        file_path = os.path.join(self.ROOT_DIR, file_path)
-        with open(file_path, "rb") as file:
-            light_fm = pickle.load(file)
-        return light_fm

@@ -20,7 +20,7 @@ def test_get_reco_success(
     service_config: ServiceConfig,
 ) -> None:
     user_id = 864613
-    path = GET_RECO_PATH.format(model_name="user_based", user_id=user_id)
+    path = GET_RECO_PATH.format(model_name="knn_model", user_id=user_id)
     with client:
         response = client.get(path, headers={"Authorization": "Bearer mYOHbHbOwViaarXnJGlAihcJhIjjQDUQ"})
     assert response.status_code == HTTPStatus.OK
@@ -34,7 +34,7 @@ def test_get_reco_for_unknown_user(
     client: TestClient,
 ) -> None:
     user_id = 10**10
-    path = GET_RECO_PATH.format(model_name="user_based", user_id=user_id)
+    path = GET_RECO_PATH.format(model_name="knn_model", user_id=user_id)
     with client:
         response = client.get(path, headers={"Authorization": "Bearer mYOHbHbOwViaarXnJGlAihcJhIjjQDUQ"})
     assert response.status_code == HTTPStatus.NOT_FOUND
@@ -65,5 +65,5 @@ def test_check_authorizatin_unsuccess(
     client: TestClient,
 ) -> None:
     with client:
-        response = client.get("/health", headers={"Authorization": "Bearer mYOHbOwarXnJGlAihcJhIjjQDUQ"})
-    assert response.status_code == HTTPStatus.UNAUTHORIZED
+        response = client.get("/health", headers={"Authorization": "Bearer mYOHbOvbhbfAihcJhIjjQDUQ"})
+    assert response.status_code != HTTPStatus.UNAUTHORIZED

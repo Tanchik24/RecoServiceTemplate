@@ -2,6 +2,8 @@ import os
 
 from dotenv import load_dotenv
 
+from service.api.exceptions import ModelNotFoundError, UserNotFoundError
+
 from .exceptions import InvalidAuthorization
 
 load_dotenv()
@@ -15,3 +17,10 @@ def check_access(authorization: str):
     print(secret_key)
     if token != secret_key:
         raise InvalidAuthorization(error_message="Invalid token")
+
+
+def check_model_user(true_model_name: str, model: str, user_id: int) -> None:
+    if model != true_model_name:
+        raise ModelNotFoundError(error_message=f"Model {model} not found")
+    if user_id > 10**9:
+        raise UserNotFoundError(error_message=f"User {user_id} not found")
