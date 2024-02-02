@@ -34,7 +34,8 @@ class UserKnn:
         self.items_mapping = {v: k for k, v in self.items_inv_mapping.items()}
 
     def get_matrix(
-        self, df: pd.DataFrame, user_col: str = "user_id", item_col: str = "item_id", weight_col: str = None
+        self, df: pd.DataFrame, user_col: str = "user_id",
+        item_col: str = "item_id", weight_col: str = None
     ):
         if weight_col:
             weights = df[weight_col].astype(np.float32)
@@ -42,11 +43,13 @@ class UserKnn:
             weights = np.ones(len(df), dtype=np.float32)
 
         self.interaction_matrix = sp.sparse.coo_matrix(
-            (weights, (df[item_col].map(self.items_mapping.get), df[user_col].map(self.users_mapping.get)))
+            (weights, (df[item_col].map(self.items_mapping.get),
+                       df[user_col].map(self.users_mapping.get)))
         )
 
         self.watched = (
-            df.groupby(user_col, as_index=False).agg({item_col: list}).rename(columns={user_col: "sim_user_id"})
+            df.groupby(user_col, as_index=False).agg({item_col: list}).rename(
+                columns={user_col: "sim_user_id"})
         )
 
         return self.interaction_matrix
@@ -60,7 +63,7 @@ class UserKnn:
     def _count_item_idf(self, df: pd.DataFrame, n: int):
         item_cnt = Counter(df["item_id"].values)
         temp_item_idf = pd.DataFrame.from_dict(item_cnt, orient="index", columns=["doc_freq"]).reset_index()
-        temp_item_idf["idf"] = temp_item_idf["doc_freq"].apply(lambda x: self.idf(n, x))
+        temp_item_idf["idf"] = temp_item_idf["doc_freq"].apply(lambda x: self.idf(n, x))  # pylint: disable=E1136,E1137
         self.item_idf = temp_item_idf
 
     def fit(self, train: pd.DataFrame):
@@ -99,12 +102,14 @@ class UserKnn:
             .explode("item_id")
             .sort_values(["user_id", "sim"], ascending=False)
             .drop_duplicates(["user_id", "item_id"], keep="first")
-            .merge(self.item_idf, left_on="item_id", right_on="index", how="left")
+            .merge(self.item_idf, left_on="item_id", right_on="index",
+                   how="left")
         )
         recs["score"] = recs["sim"] * recs["idf"]
         recs = recs.sort_values(["user_id", "score"], ascending=False)
         recs["rank"] = recs.groupby("user_id").cumcount() + 1
-        return recs[recs["rank"] <= N_recs][["user_id", "item_id", "score", "rank"]]
+        return recs[recs["rank"] <= N_recs][
+            ["user_id", "item_id", "score", "rank"]]
 
     def recommend(self, user: int, N_recs: int = 10) -> List:
         if user not in self.users:
@@ -125,9 +130,11 @@ class UserKnn:
         watched_items = self.watched.set_index("sim_user_id").loc[sim_users_np]["item_id"]
         watched_items_np = np.concatenate(watched_items.values)
 
-        item_idf = self.item_idf.set_index("index").loc[watched_items_np]["idf"].values
+        item_idf = self.item_idf.set_index("index").loc[watched_items_np][
+            "idf"].values
 
-        scores = np.repeat(sims_np, [len(items) for items in watched_items.values]) * item_idf
+        scores = np.repeat(sims_np, [len(items) for items in
+                                     watched_items.values]) * item_idf
 
         sorted_indices = np.argsort(-scores)
         sorted_items = watched_items_np[sorted_indices]
@@ -137,4 +144,4 @@ class UserKnn:
 
         top_items = unique_top_items[:N_recs]
 
-        return top_items.tolist()
+        return top_items

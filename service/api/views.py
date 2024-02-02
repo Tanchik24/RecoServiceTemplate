@@ -1,12 +1,11 @@
+import random
 from typing import List
 
-import numpy as np
 from fastapi import APIRouter, FastAPI, Header, Request
 from pydantic import BaseModel
 
-from service.api.auth import check_access
-from service.api.exceptions import ModelNotFoundError, UserNotFoundError
-from service.local_repository.Repository import Repository
+from service.api.auth import check_access, check_model_user
+from service.api.recsys.get_knn_recommend import get_knn_rocommend
 from service.log import app_logger
 
 
@@ -14,9 +13,6 @@ class RecoResponse(BaseModel):
     user_id: int
     items: List[int]
 
-
-user_knn_model = Repository.fetch_user_knn_model()
-popular_model = Repository.fetch_popular_model()
 
 router = APIRouter()
 
@@ -38,20 +34,13 @@ async def get_reco(model_name: str, user_id: int, request: Request, authorizatio
     check_access(authorization)
     app_logger.info(f"Request for model: {model_name}, user_id: {user_id}")
 
-    if model_name != "knn_model":
-        raise ModelNotFoundError(error_message=f"Model {model_name} not found")
-    if user_id > 10**9:
-        raise UserNotFoundError(error_message=f"User {user_id} not found")
-
+    check_model_user("knn_model", model_name, user_id)
     k_recs = request.app.state.k_recs
-    knn_rec = user_knn_model.recommend(user_id)[: int(k_recs * 0.5)]
-    pop_rec = popular_model.get(str(user_id), popular_model["all"])
-    knn_rec_np = np.array(knn_rec)
-    pop_rec_np = np.array(pop_rec)
+    recos = get_knn_rocommend(user_id, k_recs)
 
-    pop_rec_filtered = np.setdiff1d(pop_rec_np, knn_rec_np)
+    if recos is None:
+        recos = [random.randint(0, 100) for _ in range(k_recs)]
 
-    recos = np.concatenate([knn_rec_np, pop_rec_filtered])[:k_recs]
     return RecoResponse(user_id=user_id, items=recos)
 
 
