@@ -42,6 +42,7 @@ tensorflow = "2.9"
 colorama = "^0.4.4"
 recbole = "^1.2.0"
 ray = {extras = ["tune"], version = "^2.9.2"}
+protobuf = "^3.20"
 
 
 [tool.poetry.group.dev.dependencies]
