@@ -41,7 +41,7 @@ keras = "2.9"
 tensorflow = "2.9"
 colorama = "^0.4.4"
 recbole = "^1.2.0"
-ray = "^2.9.2"
+ray = {extras = ["tune"], version = "^2.9.2"}
 
 
 [tool.poetry.group.dev.dependencies]
