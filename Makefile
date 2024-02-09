@@ -14,6 +14,7 @@ CONTAINER_NAME := reco_service
 	poetry check
 	poetry run pip install --upgrade setuptools wheel
 	poetry run pip install lightfm==1.17 --no-use-pep517
+	poetry run pip install recbole
 
 setup: .venv
 
