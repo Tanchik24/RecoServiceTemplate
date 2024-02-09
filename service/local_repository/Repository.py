@@ -24,6 +24,8 @@ class Repository:
         if self.root_dir is None:
             return None
         file_path = os.getenv("KNN")
+        if file_path is None:
+            return None
         file_path = os.path.join(self.ROOT_DIR, file_path)
         with open(file_path, "rb") as file:
             user_knn_model = pickle.load(file)
@@ -33,6 +35,8 @@ class Repository:
         if self.root_dir is None:
             return None
         file_path = os.getenv("POPULAR")
+        if file_path is None:
+            return None
         file_path = os.path.join(self.ROOT_DIR, file_path)
         popular_model = np.load(file_path, allow_pickle=True)
         return popular_model
@@ -41,6 +45,8 @@ class Repository:
         if self.root_dir is None:
             return None
         dssm_path = os.getenv("DSSM")
+        if dssm_path is None:
+            return None
         dssm_path = os.path.join(self.ROOT_DIR, dssm_path)
         dssm = FaissIndex.load(dssm_path)
         return dssm
@@ -49,6 +55,8 @@ class Repository:
         if self.root_dir is None:
             return None
         au_path = os.getenv("AUTOENCODER")
+        if au_path is None:
+            return None
         au_path = os.path.join(self.ROOT_DIR, au_path)
         autoencoder = AutoencoderRecommender.load(au_path)
         return autoencoder
@@ -58,6 +66,8 @@ class Repository:
             return None
         popular = np.array(self.fetch_popular_model())
         mul_path = os.getenv("MULTIVAE")
+        if mul_path is None:
+            return None
         mul_path = os.path.join(self.ROOT_DIR, mul_path)
         model = MultiVAE(mul_path, popular)
         return model
