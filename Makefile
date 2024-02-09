@@ -15,6 +15,7 @@ CONTAINER_NAME := reco_service
 	poetry run pip install --upgrade setuptools wheel
 	poetry run pip install lightfm==1.17 --no-use-pep517
 	poetry run pip install recbole
+	poetry run pip install faiss-cpu
 
 setup: .venv
 
