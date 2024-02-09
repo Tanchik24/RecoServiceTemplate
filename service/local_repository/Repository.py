@@ -64,10 +64,10 @@ class Repository:
     def fetch_multivae_model(self) -> "MultiVAE":
         if self.root_dir is None:
             return None
-        popular = np.array(self.fetch_popular_model())
         mul_path = os.getenv("MULTIVAE")
         if mul_path is None:
             return None
+        popular = np.array(self.fetch_popular_model())
         mul_path = os.path.join(self.ROOT_DIR, mul_path)
         model = MultiVAE(mul_path, popular)
         return model
