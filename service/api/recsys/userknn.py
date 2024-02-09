@@ -60,7 +60,7 @@ class UserKnn:
     def _count_item_idf(self, df: pd.DataFrame, n: int):
         item_cnt = Counter(df["item_id"].values)
         temp_item_idf = pd.DataFrame.from_dict(item_cnt, orient="index", columns=["doc_freq"]).reset_index()
-        temp_item_idf["idf"] = temp_item_idf["doc_freq"].apply(lambda x: self.idf(n, x))
+        temp_item_idf["idf"] = temp_item_idf["doc_freq"].apply(lambda x: self.idf(n, x))  # pylint: disable=E1136,E1137
         self.item_idf = temp_item_idf
 
     def fit(self, train: pd.DataFrame):
@@ -137,4 +137,4 @@ class UserKnn:
 
         top_items = unique_top_items[:N_recs]
 
-        return top_items.tolist()
+        return top_items

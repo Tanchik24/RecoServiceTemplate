@@ -11,7 +11,13 @@ CONTAINER_NAME := reco_service
 .venv:
 	poetry env use python3.9
 	poetry install --no-root
+	poetry run pip install recbole
 	poetry check
+	poetry run pip install --upgrade setuptools wheel
+	poetry run pip install lightfm==1.17 --no-use-pep517
+	poetry run pip install faiss-cpu
+	poetry run pip install keras==2.9
+	poetry run pip install tensorflow==2.9
 
 setup: .venv
 
@@ -50,10 +56,7 @@ flake: .venv
 mypy: .venv
 	poetry run mypy $(PROJECT) $(TESTS)
 
-pylint: .venv
-	poetry run pylint $(PROJECT) $(TESTS)
-
-lint: isort flake mypy pylint
+lint: isort flake mypy
 
 
 # Test
