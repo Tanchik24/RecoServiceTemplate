@@ -32,6 +32,11 @@ nltk = "^3.8.1"
 pymorphy2 = "^0.9.1"
 navec = "^0.10.0"
 tensorflow = "2.15.0"
+sentence-transformers = "^2.3.1"
+matplotlib = "^3.8.2"
+seaborn = "^0.13.2"
+marshmallow = "^3.20.2"
+pyyaml = "^6.0.1"
 
 
 

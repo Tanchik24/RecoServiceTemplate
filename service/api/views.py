@@ -5,7 +5,7 @@ from fastapi import APIRouter, FastAPI, Header, Request
 from pydantic import BaseModel
 
 from service.api.auth import check_access, check_model_user
-from service.api.recsys.get_knn_recommend import get_knn_rocommend
+from service.local_repository.Repository import Repository
 from service.log import app_logger
 
 
@@ -13,6 +13,11 @@ class RecoResponse(BaseModel):
     user_id: int
     items: List[int]
 
+
+repository = Repository()
+dssm_model = repository.fetch_dssm_model()
+au_model = repository.fetch_autoencoder_model()
+multivae = repository.fetch_multivae_model()
 
 router = APIRouter()
 
@@ -34,9 +39,14 @@ async def get_reco(model_name: str, user_id: int, request: Request, authorizatio
     check_access(authorization)
     app_logger.info(f"Request for model: {model_name}, user_id: {user_id}")
 
-    check_model_user("knn_model", model_name, user_id)
+    check_model_user(["dssm_model", "autoencoder_model", "multivae_model"], model_name, user_id)
     k_recs = request.app.state.k_recs
-    recos = get_knn_rocommend(user_id, k_recs)
+    if model_name == "dssm_model":
+        recos = dssm_model.get_items(user_id)
+    elif model_name == "autoencoder_model":
+        recos = au_model.recommend(user_id)
+    elif model_name == "multivae_model":
+        recos = multivae.recommend(user_id, k_recs)
 
     if recos is None:
         recos = [random.randint(0, 100) for _ in range(k_recs)]

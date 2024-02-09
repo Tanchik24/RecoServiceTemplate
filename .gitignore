@@ -67,6 +67,7 @@ venv.bak/
 # large files
 kion_train/
 service/api/recsys/models/
+recbox_data/
 
 kion_train/interactions.csv
 kion_train/items.csv
