@@ -16,6 +16,8 @@ CONTAINER_NAME := reco_service
 	poetry run pip install lightfm==1.17 --no-use-pep517
 	poetry run pip install recbole
 	poetry run pip install faiss-cpu
+	poetry run pip install keras==2.9
+	poetry run pip install tensorflow==2.9
 
 setup: .venv
 
