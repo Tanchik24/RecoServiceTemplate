@@ -39,7 +39,6 @@ pyyaml = "^6.0.1"
 faiss-cpu = "^1.7.4"
 keras = "2.9"
 tensorflow = "2.9"
-recbole = "*"
 colorama = "^0.4.4"
 
 
