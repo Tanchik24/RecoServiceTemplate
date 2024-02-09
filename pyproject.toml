@@ -40,7 +40,7 @@ faiss-cpu = "^1.7.4"
 keras = "2.9"
 tensorflow = "2.9"
 recbole = "^1.2.0"
-colorama = "0.4.4"
+colorama = "^0.4.4"
 
 
 [tool.poetry.group.dev.dependencies]
