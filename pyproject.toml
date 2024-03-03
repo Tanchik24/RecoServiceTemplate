@@ -32,6 +32,9 @@ nltk = "^3.8.1"
 pymorphy2 = "^0.9.1"
 navec = "^0.10.0"
 tensorflow = "2.15.0"
+dill = "^0.3.8"
+lightgbm = "^4.3.0"
+catboost = "^1.2.2"
 
 
 

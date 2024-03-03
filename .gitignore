@@ -74,5 +74,7 @@ kion_train/users.csv
 
 ./service/api/recsys/models/knn.pkl
 ./service/api/recsys/models/popular_recommendations.json
+recbox_data/
+recbox_data/recbox_data.inter
 
 
