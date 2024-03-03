@@ -3,10 +3,11 @@ from typing import List
 import numpy as np
 
 class Ranker:
-    def __init__(self, path, n=10):
+    def __init__(self, path, popular, n=10):
         self.ranker = pickle.load(open(path, "rb"))
         self.popolar = 0
         self.n = n
+        self.popular = popular
 
     def add_popular(self, item_ids: np.ndarray, N: int) -> np.ndarray:
         mask = ~np.isin(self.popular, item_ids)
@@ -27,5 +28,3 @@ class Ranker:
             recos = self.add_popular(recos, self.n)
         return recos
 
-ranker = Ranker('/Users/tanchik/Desktop/Настоящее/учеба/RecSys/RecoServiceTemplate/service/api/recsys/models/ranker_recos.pickle')
-print(ranker.recommend(0))
