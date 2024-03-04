@@ -20,26 +20,32 @@ class Repository:
             self.popular: np.ndarray = self.fetch_popular_model()
 
     def fetch_user_knn_model(self) -> "UserKnn":
+        file_path = os.getenv("KNN")
+        if file_path is None:
+            return None
         if self.root_dir is None:
             return None
-        file_path = os.getenv("KNN")
         file_path = os.path.join(self.ROOT_DIR, file_path)
         with open(file_path, "rb") as file:
             user_knn_model = pickle.load(file)
         return user_knn_model
 
     def fetch_popular_model(self) -> np.ndarray:
+        file_path = os.getenv("POPULAR")
+        if file_path is None:
+            return None
         if self.root_dir is None:
             return None
-        file_path = os.getenv("POPULAR")
         file_path = os.path.join(self.ROOT_DIR, file_path)
         popular_model = np.load(file_path)
         return popular_model
 
     def fetch_ranker_model(self) -> "Ranker":
+        file_path = os.getenv("RANKER")
+        if file_path is None:
+            return None
         if self.root_dir is None:
             return None
-        file_path = os.getenv("RANKER")
         file_path = os.path.join(self.ROOT_DIR, file_path)
         ranker_model = Ranker(file_path, self.popular)
         return ranker_model
