@@ -17,7 +17,7 @@ class Repository:
             parts: list = self.root_dir.split("/")
             index: int = len(parts) - 1 - parts[::-1].index("RecoServiceTemplate")
             self.ROOT_DIR: str = "/".join(parts[: index + 1])
-        self.popular: np.ndarray = self.fetch_popular_model()
+            self.popular: np.ndarray = self.fetch_popular_model()
 
     def fetch_user_knn_model(self) -> "UserKnn":
         if self.root_dir is None:
