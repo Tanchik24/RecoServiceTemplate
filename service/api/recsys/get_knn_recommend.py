@@ -4,7 +4,7 @@ import numpy as np
 
 from service.local_repository.Repository import Repository
 
-repository = Repository()
+repository: Repository = Repository()
 knn = repository.fetch_user_knn_model()
 pop = repository.fetch_popular_model()
 

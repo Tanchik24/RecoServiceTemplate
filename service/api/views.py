@@ -18,6 +18,7 @@ router = APIRouter()
 repository = Repository()
 ranker_model = repository.fetch_ranker_model()
 
+
 @router.get(
     path="/health",
     tags=["Health"],
@@ -41,7 +42,7 @@ async def get_reco(model_name: str, user_id: int, request: Request, authorizatio
 
     if ranker_model is None:
         recos = [random.randint(0, 100) for _ in range(k_recs)]
-    elif model_name == 'ranker_model':
+    elif model_name == "ranker_model":
         recos = ranker_model.recommend(user_id)
 
     return RecoResponse(user_id=user_id, items=recos)
