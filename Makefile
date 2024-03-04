@@ -12,6 +12,8 @@ CONTAINER_NAME := reco_service
 	poetry env use python3.9
 	poetry install --no-root
 	poetry check
+	poetry run pip install --upgrade setuptools wheel
+	poetry run pip install lightfm==1.17 --no-use-pep517
 
 setup: .venv
 

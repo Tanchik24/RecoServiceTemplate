@@ -55,9 +55,7 @@ profile_default/
 ipython_config.py
 
 # Environments
-.env
 .venv
-env/
 venv/
 ENV/
 env.bak/
@@ -76,5 +74,7 @@ kion_train/users.csv
 
 ./service/api/recsys/models/knn.pkl
 ./service/api/recsys/models/popular_recommendations.json
-
+recbox_data/
+recbox_data/recbox_data.inter
+.env
 
