@@ -42,6 +42,7 @@ class Repository:
     def fetch_ranker_model() -> 'Ranker':
         file_path = os.getenv("RANKER")
         root_dir = os.environ.get("ROOT_DIR")
+        print(root_dir)
         if root_dir is None:
             return None
         file_path = os.path.join(root_dir, file_path)
