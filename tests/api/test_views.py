@@ -1,16 +1,15 @@
+import os
 from http import HTTPStatus
 
+from dotenv import load_dotenv
 from starlette.testclient import TestClient
 
 from service.settings import ServiceConfig
 
-import os
-
-from dotenv import load_dotenv
-
 GET_RECO_PATH = "/reco/{model_name}/{user_id}"
 
-load_dotenv(dotenv_path='.env.testing')
+load_dotenv(dotenv_path=".env.testing")
+
 
 def test_health(
     client: TestClient,

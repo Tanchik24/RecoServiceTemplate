@@ -7,7 +7,7 @@ from service.api.exceptions import ModelNotFoundError, UserNotFoundError
 
 from .exceptions import InvalidAuthorization
 
-load_dotenv(dotenv_path='.env.testing')
+load_dotenv(dotenv_path=".env.testing")
 
 
 def check_access(authorization: str):
