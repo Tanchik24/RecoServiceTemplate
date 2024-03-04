@@ -7,14 +7,14 @@ from service.api.exceptions import ModelNotFoundError, UserNotFoundError
 
 from .exceptions import InvalidAuthorization
 
-load_dotenv()
+load_dotenv(dotenv_path='.env.testing')
 
 
 def check_access(authorization: str):
     if authorization is None:
         raise InvalidAuthorization(error_message="No token")
     token = authorization.split(" ")[-1]
-    secret_key = os.getenv("SECRET_KEY")
+    secret_key = os.getenv("BEARER")
     print(secret_key)
     if token != secret_key:
         raise InvalidAuthorization(error_message="Invalid token")
