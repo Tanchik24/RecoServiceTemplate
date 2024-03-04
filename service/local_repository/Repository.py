@@ -13,6 +13,10 @@ load_dotenv()
 class Repository:
     popular = None
 
+    def __init__(self):
+        if Repository.popular is None:
+            Repository.popular = self.fetch_popular_model()
+
     @staticmethod
     def fetch_user_knn_model() -> "UserKnn":
         file_path = os.getenv("KNN")
@@ -24,8 +28,8 @@ class Repository:
             user_knn_model = pickle.load(file)
         return user_knn_model
 
-    @classmethod
-    def fetch_popular_model(cls) -> np.ndarray:
+    @staticmethod
+    def fetch_popular_model() -> np.ndarray:
         file_path = os.getenv("POPULAR")
         root_dir = os.environ.get("ROOT_DIR")
         if root_dir is None:
@@ -34,10 +38,6 @@ class Repository:
         popular_model = np.load(file_path)
         return popular_model
 
-    @classmethod
-    def initialize_popular(cls):
-        cls.popular = cls.fetch_popular_model()
-
     @staticmethod
     def fetch_ranker_model() -> 'Ranker':
         file_path = os.getenv("RANKER")
@@ -45,6 +45,5 @@ class Repository:
         if root_dir is None:
             return None
         file_path = os.path.join(root_dir, file_path)
-        Repository.initialize_popular()
         ranker_model = Ranker(file_path, Repository.popular)
         return ranker_model
